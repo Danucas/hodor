@@ -2,12 +2,32 @@
 import mechanize
 
 br = mechanize.Browser()
-br.open("http://158.69.76.135/level1.php")
-for i in range(4):
+res = br.open("http://158.69.76.135/level1.php")
+
+def getCount(txt):
+    ind = 0
+    count = 0
+    while ind < len(txt):
+        ind = txt.find('1305', ind)
+        if ind == -1:
+            break
+        st = txt[(ind+4):(ind+40)].replace('\n', '-')
+        count = st.replace('<td>', '')\
+                  .replace('n', '').replace('</td>', '').replace("\\", '').strip()
+        count = int(count)
+        ind += 1
+    print("Voting count:")
+    print("   ", count)
+    return count
+
+st = str(res.read())
+while getCount(st) < 4000:
     br.select_form(nr=0)
     input = br.form.find_control("id")
     ke = br.form.find_control("key")
-    print(ke.value)
-    #input.value = '1305'
-    #res = br.submit()
+    print("Key: ", ke.value)
+    input.value = '1305'
+    res = br.submit()
+    st = str(res.read())
     br.reload()
+    
