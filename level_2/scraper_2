@@ -4,17 +4,10 @@ import mechanize
 br = mechanize.Browser()
 br.set_handle_robots(False)
 br.addheaders = ([('user-agent', '   Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'), ('accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')])
-try:
-    res = br.open("http://158.69.76.135/level2.php")
-
-except Exception as e:
-    print(e)
-
 
 for i in range(1024):
-    
+    res = br.open("http://158.69.76.135/level2.php")
     br.select_form(nr=0)
     input = br.form.find_control("id")
     input.value = '1305'
     br.submit()
-    br.reload()

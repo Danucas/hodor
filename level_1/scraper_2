@@ -9,4 +9,4 @@ for i in range(4096):
     input = br.form.find_control("id")
     input.value = '1305'
     br.submit()
-    br.reload()
+    br.reload()x

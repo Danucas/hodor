@@ -53,7 +53,7 @@ def vote():
         print(e)
 
 counter = 0
-while counter < 100:
+while counter < 1024:
     state = vote()
     print("Success" if state is True else "Failed")
     if state is True:
