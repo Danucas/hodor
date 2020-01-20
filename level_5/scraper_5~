@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+import mechanize
+import pytesseract
+from bs4 import BeautifulSoup as bs
+from subprocess import check_output
+from test import cond_
+try:
+    import Image
+except ImportError:
+    from PIL import Image
+
+def parse_captcha(src):
+    img_res = br.open_novisit(src)
+    f = open("captcha.png", "w+b")
+    binary_f = bytearray(img_res.read())
+    f.write(binary_f)
+    f.close()
+    path = "captcha.png"
+    check_output(['convert', path, '-resample', '600', path])
+    return pytesseract.image_to_string(Image.open(path))
+
+
+
+br = mechanize.Browser()
+br.set_handle_robots(False)
+br.addheaders = ([('user-agent', '   Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0')])
+
+def vote():
+    try:
+        print('opening site')
+        url = "http://158.69.76.135/"
+        res = br.open(url + "level5.php")
+        print('site opened')
+        br.select_form(nr=0)
+        input = br.form.find_control("id")
+        input.value = '1305'
+        soup = bs(res.get_data(), features="lxml")
+        images = soup.findAll('img')
+        cod = parse_captcha(url + images[1]['src'])
+        print(cod)
+        captcha = br.form.find_control("captcha")
+        captcha.value = cod
+        re = br.submit().read().decode('ascii')
+        state = ''
+        if re == "See you later hacker! [11]":
+            state = False
+        else:
+            state = True
+        br.reload()
+        return state
+
+    except Exception as e:
+        print(e)
+
+counter = 0
+while counter < 100:
+    state = vote()
+    print("Success" if state is True else "Failed")
+    if state is True:
+        counter += 1
+    print("Votes: ", counter)
