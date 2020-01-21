@@ -12,6 +12,19 @@ except ImportError:
 
 br = mechanize.Browser()
 
+def check_code(captcha):
+    if len(captcha) != 8:
+        return None
+    for char in captcha:
+        i = ord(char)
+        if (i > 47 and i < 58)\
+           or (i > 64 and i < 91)\
+           or (i > 96 and i < 123):
+            pass
+        else:
+            return None
+    return captcha
+
 def parse_captcha(src):
     img_res = br.open_novisit(src)
     f = open("captcha.png", "w+b")
@@ -36,7 +49,9 @@ def vote():
         input.value = '1305'
         soup = bs(res.get_data(), features="lxml")
         images = soup.findAll('img')
-        cod = parse_captcha(url + images[1]['src'])
+        cod = check_code(parse_captcha(url + images[1]['src']))
+        if cod is None:
+            return None
         print("Captcha: ", cod)
         captcha = br.form.find_control("captcha")
         captcha.value = cod
